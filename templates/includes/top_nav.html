@@ -1,0 +1,21 @@
+<nav class="page-nav" aria-label="Page navigation">
+    <div class="page-nav-main">
+        {% if show_back %}
+            <a class="back-nav" href="{{ back_url }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M15 18l-6-6 6-6"></path>
+                </svg>
+                <span>Back</span>
+            </a>
+        {% endif %}
+        <span class="page-nav-title">{{ title }}</span>
+    </div>
+
+    <div class="mode-toggle" aria-label="Mode switch">
+        {% for mode_option in mode_options %}
+            <a class="mode-toggle-link {% if mode_option.is_current %}is-current{% endif %}" href="{{ mode_option.url }}">
+                {{ mode_option.value }}
+            </a>
+        {% endfor %}
+    </div>
+</nav>

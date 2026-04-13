@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Vocabulary Explorer{% endblock %}
+
+{% block content %}
+    <div class="app-shell">
+        {% include "includes/top_nav.html" with title="Vocabulary Explorer" show_back=False %}
+
+        <main class="screen-content home-screen">
+            <section class="search-panel home-search-panel" aria-labelledby="search-heading">
+                <h2 id="search-heading" class="sr-only">Search</h2>
+                <form
+                    class="search-form search-form-stack"
+                    action="{{ search_word_action }}"
+                    method="get"
+                    role="search"
+                    data-search-form
+                >
+                    <input type="hidden" name="mode" value="{{ current_mode }}">
+                    <input type="hidden" name="back" value="{{ request.get_full_path }}">
+                    <label class="sr-only" for="word-search">Search words or categories</label>
+                    <div class="search-field">
+                        <span class="search-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="6.5"></circle>
+                                <path d="M16 16l5 5"></path>
+                            </svg>
+                        </span>
+                        <input
+                            id="word-search"
+                            name="q"
+                            type="search"
+                            value="{{ search_query }}"
+                            placeholder="{{ search_placeholder }}"
+                            data-search-query
+                            autocomplete="off"
+                        >
+                    </div>
+                    <div class="search-suggestions" data-search-suggestions hidden></div>
+                    <script type="application/json" data-search-suggestions-source>{{ search_suggestions_json|safe }}</script>
+                </form>
+            </section>
+
+            <section class="content-section home-panel home-topics-panel home-topics-spotlight" id="topics" aria-labelledby="topics-title">
+                <div class="section-head section-head-split">
+                    <div>
+                        <h2 id="topics-title">Explore by Topics</h2>
+                        <p class="mode-intro">Open a category quickly with large cards, then browse the words inside it.</p>
+                    </div>
+                    <a class="recent-link" href="{{ browse_topics_url }}">Browse All</a>
+                </div>
+
+                <div class="topic-grid topic-grid-spotlight">
+                    {% for topic in featured_topics %}
+                        <a class="topic-card topic-card-detail topic-card-spotlight" href="{{ topic.url }}">
+                            <span class="topic-card-icon" aria-hidden="true">
+                                {% if topic.icon == "family" %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M7 18v-4"></path>
+                                        <path d="M17 18v-4"></path>
+                                        <circle cx="7" cy="10" r="2.5"></circle>
+                                        <circle cx="17" cy="10" r="2.5"></circle>
+                                        <path d="M4.5 18c.6-2 1.8-3 2.5-3s1.9 1 2.5 3"></path>
+                                        <path d="M14.5 18c.6-2 1.8-3 2.5-3s1.9 1 2.5 3"></path>
+                                    </svg>
+                                {% elif topic.icon == "sports" %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="7"></circle>
+                                        <path d="M7 8l3 2"></path>
+                                        <path d="M17 8l-3 2"></path>
+                                        <path d="M9 16h6"></path>
+                                    </svg>
+                                {% elif topic.icon == "seasons" %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="4"></circle>
+                                        <path d="M12 3v3"></path>
+                                        <path d="M12 18v3"></path>
+                                        <path d="M3 12h3"></path>
+                                        <path d="M18 12h3"></path>
+                                    </svg>
+                                {% elif topic.icon == "nouns" %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 5h12v14H6z"></path>
+                                        <path d="M9 9h6"></path>
+                                        <path d="M9 13h4"></path>
+                                    </svg>
+                                {% elif topic.icon == "verbs" %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M7 17L17 7"></path>
+                                        <path d="M9 7h8v8"></path>
+                                    </svg>
+                                {% elif topic.icon == "fruits" %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 7c3.9 0 6.5 2.6 6.5 6.3 0 3.2-2.5 5.7-6.5 5.7s-6.5-2.5-6.5-5.7C5.5 9.6 8.1 7 12 7z"></path>
+                                        <path d="M12 7c0-1.8 1.5-3 3.8-3"></path>
+                                        <path d="M10 5c.9 1.4 2.1 2 4 2"></path>
+                                    </svg>
+                                {% else %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 15c0-3.6 2.7-6 6-6s6 2.4 6 6"></path>
+                                        <path d="M8 17h8"></path>
+                                        <circle cx="8.5" cy="10.5" r="1.5"></circle>
+                                        <circle cx="15.5" cy="10.5" r="1.5"></circle>
+                                    </svg>
+                                {% endif %}
+                            </span>
+                            <strong>{{ topic.name }}</strong>
+                            <span>{{ topic.word_count }} words</span>
+                        </a>
+                    {% endfor %}
+                </div>
+
+                <p class="graph-hint">Home highlights 6 topic cards. Browse Topics opens the full {{ all_topic_count }}-topic prototype library.</p>
+            </section>
+
+            <div class="home-dashboard-grid">
+                <section class="content-section home-panel home-feature-panel" id="mode-hub" aria-labelledby="mode-hub-title">
+                    <div class="section-head">
+                        <h2 id="mode-hub-title">
+                            {% if current_mode == "Research" %}
+                                Research Mode
+                            {% else %}
+                                Explore Mode
+                            {% endif %}
+                        </h2>
+                    </div>
+
+                    <div class="overview-card">
+                        {% if current_mode == "Research" %}
+                            <p class="mode-intro">Open a word to inspect its related nodes, similarity scores, and connected category map.</p>
+                            <p class="overview-metric"><strong>Mock cosine graph</strong><span>Related words move closer when their similarity score is higher.</span></p>
+                        {% else %}
+                            <p class="mode-intro">{{ saved_word_count }} saved words across {{ collection_count }} collections.</p>
+                            <p class="overview-metric"><strong>{{ saved_word_count }}</strong><span>Saved words ready to organize.</span></p>
+                            <p class="overview-metric"><strong>{{ collection_count }}</strong><span>Collections available in this session.</span></p>
+                            <a class="action-button action-button-secondary" href="{{ collections_url }}">Open Collections</a>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <section class="content-section home-panel home-recent-panel" aria-labelledby="recent-searches-title">
+                    <div class="section-head">
+                        <h2 id="recent-searches-title">Recent Searches</h2>
+                    </div>
+
+                    {% if recent_searches %}
+                        <ul class="recent-list">
+                            {% for search in recent_searches %}
+                                <li><a class="recent-link" href="{% url search_route_name %}?q={{ search|urlencode }}&mode={{ current_mode|urlencode }}&back={{ request.get_full_path|urlencode }}">{{ search }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="empty-state">Start exploring vocabulary</p>
+                    {% endif %}
+                </section>
+            </div>
+        </main>
+
+        <nav class="bottom-nav" aria-label="Primary">
+            <a class="nav-link" href="{{ collections_url }}">Collections</a>
+            <a class="nav-link nav-home" href="{% url 'home' %}?mode={{ current_mode|urlencode }}" aria-current="page">
+                <span class="sr-only">Home</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 10.5L12 4l8 6.5"></path>
+                    <path d="M6.5 9.5V20h11V9.5"></path>
+                    <path d="M10 20v-5.5h4V20"></path>
+                </svg>
+            </a>
+            <a class="nav-link" href="{{ browse_topics_url }}">Browse Topics</a>
+        </nav>
+    </div>
+{% endblock %}
