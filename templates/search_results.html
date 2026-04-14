@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="app-shell">
-        {% include "includes/top_nav.html" with title="Explore" show_back=True %}
+        {% include "includes/top_nav.html" with title=current_mode_label show_back=True %}
 
         <main class="screen-content">
             <section class="search-panel" aria-labelledby="search-heading">
@@ -51,29 +51,8 @@
                     </div>
 
                     <div class="translation-card">
-                        <div class="translation-card-head">
-                            <div>
-                                <p class="translation-language">Category</p>
-                                <p class="result-english">{{ result.english_word|title }}</p>
-                            </div>
-
-                            <form class="inline-form inline-form-compact save-word-form" method="post" action="{% url 'search-results' %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="action" value="toggle_saved_word">
-                                <input type="hidden" name="mode" value="{{ current_mode }}">
-                                <input type="hidden" name="q" value="{{ search_query }}">
-                                <input type="hidden" name="back" value="{{ back_url }}">
-                                <input type="hidden" name="search_type" value="{{ current_search_type }}">
-                                <button class="save-word-button {% if result.is_saved %}is-saved{% endif %}" type="submit">
-                                    <span class="save-word-icon" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M7 4.5h10a1 1 0 0 1 1 1V20l-6-3-6 3V5.5a1 1 0 0 1 1-1z"></path>
-                                        </svg>
-                                    </span>
-                                    <span>{% if result.is_saved %}Saved{% else %}Save Word{% endif %}</span>
-                                </button>
-                            </form>
-                        </div>
+                        <p class="translation-language">English Word</p>
+                        <p class="result-english">{{ result.english_word|title }}</p>
 
                         {% if result.has_translation %}
                             <p class="translation-language">{{ result.cree_label }}</p>
@@ -82,21 +61,29 @@
                             <p class="translation-word translation-pending">No translation available</p>
                         {% endif %}
 
-                        {% if result.is_saved %}
-                            <div class="collection-status-banner">
-                                <strong>Added to Collection</strong>
-                                <span>This word is saved and ready to organize.</span>
-                            </div>
-                        {% endif %}
+                        <a class="save-word-button translation-card-action {% if result.is_saved %}is-saved{% endif %}" href="{{ select_collection_url }}">
+                            <span class="save-word-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M7 4.5h10a1 1 0 0 1 1 1V20l-6-3-6 3V5.5a1 1 0 0 1 1-1z"></path>
+                                </svg>
+                            </span>
+                            <span>{% if result.is_saved %}Add to More Collections{% else %}Add to Collection{% endif %}</span>
+                        </a>
+                    </div>
+                </section>
 
-                        <div class="related-group" aria-label="Related words">
-                            {% for item in result.related_words %}
-                                <a class="related-chip" href="{% url 'search-results' %}?q={{ item.english|urlencode }}&mode={{ current_mode|urlencode }}&back={{ back_url|urlencode }}">
-                                    {{ item.english|title }}
-                                    <small>{% if item.cree %}{{ item.cree }}{% else %}View word{% endif %}</small>
-                                </a>
-                            {% endfor %}
-                        </div>
+                <section class="content-section" aria-labelledby="related-words-title">
+                    <div class="section-head">
+                        <h2 id="related-words-title">Related Words</h2>
+                    </div>
+
+                    <div class="related-group" aria-label="Related words">
+                        {% for item in result.related_words %}
+                            <a class="related-chip" href="{% url 'search-results' %}?q={{ item.english|urlencode }}&mode={{ current_mode|urlencode }}&back={{ current_page_url|urlencode }}">
+                                {{ item.english|title }}
+                                <small>{% if item.cree %}{{ item.cree }}{% else %}View word{% endif %}</small>
+                            </a>
+                        {% endfor %}
                     </div>
                 </section>
 
@@ -105,81 +92,10 @@
                         <h2 id="category-link-title">Browse This Category</h2>
                     </div>
 
-                    <p class="mode-intro">Open {{ result.topic_name }} to switch between the word list and the topic map.</p>
+                    <p class="mode-intro">Open {{ result.topic_name }} to switch between the word list and the category map.</p>
                     <a class="topic-card topic-link-card" href="{% url 'topic-detail' result.topic_slug %}?mode={{ current_mode|urlencode }}&back={{ current_page_url|urlencode }}">
                         View {{ result.topic_name }} Category
                     </a>
-                </section>
-
-                <section class="content-section" id="collection-tools" aria-labelledby="collection-tools-title">
-                    <div class="section-head section-head-split">
-                        <div>
-                            <h2 id="collection-tools-title">Collections</h2>
-                            <p class="mode-intro">{{ saved_word_count }} saved words across {{ collection_count }} collections.</p>
-                        </div>
-                        <a class="recent-link" href="{{ collections_url }}">View Collections</a>
-                    </div>
-
-                    {% if result.is_saved %}
-                        {% if show_collection_prompt %}
-                            <div class="collection-prompt-card">
-                                <strong>Add to Collection?</strong>
-                                <span>Choose a collection below or create a new one for {{ result.english_word|title }}.</span>
-                            </div>
-                        {% endif %}
-
-                        {% if collections %}
-                            <div class="collection-choice-stack">
-                                {% for collection in collections %}
-                                    <article class="collection-choice-card">
-                                        <div>
-                                            <strong>{{ collection.name }}</strong>
-                                            <span>{{ collection.word_count }} words</span>
-                                        </div>
-
-                                        {% if collection.contains_current %}
-                                            <form class="inline-form inline-form-compact" method="post" action="{% url 'search-results' %}">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="action" value="remove_from_collection">
-                                                <input type="hidden" name="collection_name" value="{{ collection.name }}">
-                                                <input type="hidden" name="mode" value="{{ current_mode }}">
-                                                <input type="hidden" name="q" value="{{ search_query }}">
-                                                <input type="hidden" name="back" value="{{ back_url }}">
-                                                <input type="hidden" name="search_type" value="{{ current_search_type }}">
-                                                <button class="action-button action-button-secondary" type="submit">Remove</button>
-                                            </form>
-                                        {% else %}
-                                            <form class="inline-form inline-form-compact" method="post" action="{% url 'search-results' %}">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="action" value="add_to_collection">
-                                                <input type="hidden" name="collection_name" value="{{ collection.name }}">
-                                                <input type="hidden" name="mode" value="{{ current_mode }}">
-                                                <input type="hidden" name="q" value="{{ search_query }}">
-                                                <input type="hidden" name="back" value="{{ back_url }}">
-                                                <input type="hidden" name="search_type" value="{{ current_search_type }}">
-                                                <button class="action-button" type="submit">Add</button>
-                                            </form>
-                                        {% endif %}
-                                    </article>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <p class="empty-state">Create your first collection</p>
-                        {% endif %}
-
-                        <form class="inline-form collection-create-inline" method="post" action="{% url 'search-results' %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="action" value="create_collection">
-                            <input type="hidden" name="mode" value="{{ current_mode }}">
-                            <input type="hidden" name="q" value="{{ search_query }}">
-                            <input type="hidden" name="back" value="{{ back_url }}">
-                            <input type="hidden" name="search_type" value="{{ current_search_type }}">
-                            <input class="text-input" type="text" name="collection_name" placeholder="New collection name">
-                            <button class="action-button" type="submit">Create Collection</button>
-                        </form>
-                    {% else %}
-                        <p class="empty-state">Save this word to start building collections.</p>
-                    {% endif %}
                 </section>
             {% else %}
                 <section class="content-section" aria-labelledby="no-result-title">
@@ -211,7 +127,7 @@
                     <path d="M10 20v-5.5h4V20"></path>
                 </svg>
             </a>
-            <a class="nav-link" href="{{ browse_topics_url }}">Browse Topics</a>
+            <a class="nav-link" href="{{ browse_topics_url }}">Browse Categories</a>
         </nav>
     </div>
 {% endblock %}

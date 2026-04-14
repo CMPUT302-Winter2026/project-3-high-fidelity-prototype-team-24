@@ -1,5 +1,23 @@
 # CMPUT302-HighFidelityProject3
 
+CCID's and Github Accounts:
+
+CCID: ldesousa
+Github: LukeDesousa
+
+CCID: hnguyen5
+GitHub: haneyng 
+
+Ccid: Mataab 
+GitHub: mataabi
+
+ccid: hawaleh
+github : hawaleh
+
+ccid: aparash1
+github: Aayush03022003
+
+
 ## Install and run
 
 Clone the repository and open a terminal in the project folder:

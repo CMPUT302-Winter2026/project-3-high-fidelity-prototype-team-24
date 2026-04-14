@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Research Graph | Vocabulary Explorer{% endblock %}
+{% block title %}Advanced Graph | Vocabulary Explorer{% endblock %}
 
 {% block extra_scripts %}
     <script src="{% static 'graph.js' %}" defer></script>
@@ -9,12 +9,12 @@
 
 {% block content %}
     <div class="app-shell">
-        {% include "includes/top_nav.html" with title="Research" show_back=True %}
+        {% include "includes/top_nav.html" with title=current_mode_label show_back=True %}
 
         <main class="screen-content">
             <section class="search-panel" aria-labelledby="research-heading">
                 <div class="result-topline">
-                    <h1 id="research-heading" class="result-title">Research Graph</h1>
+                    <h1 id="research-heading" class="result-title">Advanced Graph</h1>
                 </div>
 
                 <form
@@ -24,7 +24,7 @@
                     role="search"
                     data-search-form
                 >
-                    <input type="hidden" name="mode" value="Research">
+                    <input type="hidden" name="mode" value="{{ current_mode }}">
                     <input type="hidden" name="back" value="{{ back_url }}">
                     <label class="sr-only" for="research-word-search">Search words or categories</label>
                     <div class="search-field">
@@ -57,7 +57,7 @@
 
                     <div class="translation-card research-summary">
                         <div>
-                            <p class="translation-language">Category</p>
+                            <p class="translation-language">English Word</p>
                             <p class="result-english">{{ result.english_word|title }}</p>
                         </div>
 
@@ -70,12 +70,21 @@
                                 <p class="translation-word translation-pending">No translation available</p>
                             {% endif %}
                         </div>
+
+                        <a class="save-word-button research-summary-action {% if result.is_saved %}is-saved{% endif %}" href="{{ select_collection_url }}">
+                            <span class="save-word-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M7 4.5h10a1 1 0 0 1 1 1V20l-6-3-6 3V5.5a1 1 0 0 1 1-1z"></path>
+                                </svg>
+                            </span>
+                            <span>{% if result.is_saved %}Add to More Collections{% else %}Add to Collection{% endif %}</span>
+                        </a>
                     </div>
                 </section>
 
                 <section class="content-section" aria-labelledby="research-details-title">
                     <div class="section-head">
-                        <h2 id="research-details-title">Research Details</h2>
+                        <h2 id="research-details-title">Advanced Details</h2>
                     </div>
 
                     <div class="research-data-grid">
@@ -190,7 +199,7 @@
                     <path d="M10 20v-5.5h4V20"></path>
                 </svg>
             </a>
-            <a class="nav-link" href="{{ browse_topics_url }}">Browse Topics</a>
+            <a class="nav-link" href="{{ browse_topics_url }}">Browse Categories</a>
         </nav>
     </div>
 {% endblock %}
