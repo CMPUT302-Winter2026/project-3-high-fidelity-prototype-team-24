@@ -12,11 +12,13 @@ Ccid: Mataab
 GitHub: mataabi
 
 ccid: hawaleh
-github : hawaleh
+github: hawaleh
 
 ccid: aparash1
 github: Aayush03022003
 
+ccid: essak
+github: adnaessak
 
 ## Install and run
 
@@ -49,7 +51,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-Open `http://127.0.0.1:8000/` for the app
+Open `http://127.0.0.1:8000/` for the app. For a more phone-like screen view, reduce the browser size horizontally.
 
 ## Quick checklist
 
@@ -59,4 +61,4 @@ Open `http://127.0.0.1:8000/` for the app
 4. Run `pip install -r requirements.txt`.
 5. Run `python manage.py migrate`.
 6. Run `python manage.py runserver`.
-7. Visit `http://127.0.0.1:8000/`.
+7. Visit `http://127.0.0.1:8000/`. 
